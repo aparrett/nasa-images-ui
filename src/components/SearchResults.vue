@@ -13,10 +13,7 @@
 
 <script>
 export default {
-  props: ["results"],
-  updated: function() {
-    this.results && console.log(this.results);
-  }
+  props: ["results"]
 };
 </script>
 

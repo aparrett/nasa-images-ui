@@ -7,6 +7,7 @@
       <option v-for="option in sortByOptions" :value="option.id" :key="option.id">{{ option.label }}</option>
     </select>
     <app-search-results :results="sortedResults" />
+    <div v-if="showError">The NASA images API is currently unavailable. Please try again later.</div>
   </div>
 </template>
 
@@ -27,7 +28,8 @@ export default {
         { id: "dateOldest", label: "Date: Oldest to Newest" }
       ],
       results: [],
-      sortBy: "dateNewest"
+      sortBy: "dateNewest",
+      showError: false
     };
   },
   components: {
@@ -36,21 +38,26 @@ export default {
   },
   methods: {
     submitSearch: async function(searchText) {
-      const {
-        data: {
-          collection: { items }
-        }
-      } = await axios.get(`${url}?q=${searchText}`, {
-        api_key: apiKey
-      });
+      try {
+        const {
+          data: {
+            collection: { items }
+          }
+        } = await axios.get(`${url}?q=${searchText}`, {
+          api_key: apiKey
+        });
 
-      this.results = items.map(item => {
-        return {
-          href: item.links[0].href,
-          ...item.data[0],
-          date: new moment(item.data[0].date_created).format("LL")
-        };
-      });
+        this.showError = false;
+        this.results = items.map(item => {
+          return {
+            href: item.links[0].href,
+            ...item.data[0],
+            date: new moment(item.data[0].date_created).format("LL")
+          };
+        });
+      } catch (e) {
+        this.showError = true;
+      }
     }
   },
   computed: {
