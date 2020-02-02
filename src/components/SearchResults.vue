@@ -1,6 +1,6 @@
 <template>
   <div>
-    <ul>
+    <ul class="search-results">
       <li v-for="result in results" :key="result.nasa_id">
         <h3>{{ result.title }}</h3>
         <img :src="result.href" />
@@ -21,10 +21,10 @@ export default {
 </script>
 
 <style scoped>
-li {
+.search-results li {
   list-style-type: none;
 }
-img {
+.search-results img {
   max-width: 300px;
   max-height: 300px;
 }

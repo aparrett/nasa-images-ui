@@ -2,20 +2,11 @@
   <div>
     <h1>Search NASA Images</h1>
     <app-search :submitSearch="submitSearch" />
-    <br />
-    <label
-      >Sort By
-      <select name="sortBy" id="sortBy" v-model="sortBy">
-        <option
-          v-for="option in sortByOptions"
-          :value="option.id"
-          :key="option.id"
-        >
-          {{ option.label }}
-        </option>
-      </select>
-    </label>
-    <app-search-results :results="results" />
+    <br />Sort By
+    <select name="sortBy" id="sortBy" v-model="sortBy">
+      <option v-for="option in sortByOptions" :value="option.id" :key="option.id">{{ option.label }}</option>
+    </select>
+    <app-search-results :results="sortedResults" />
   </div>
 </template>
 
@@ -60,22 +51,19 @@ export default {
           date: new moment(item.data[0].date_created).format("LL")
         };
       });
-
-      this.sortResults(this.sortBy);
-    },
-    sortResults: function(val) {
-      this.results.sort((a, b) => {
-        if (val === "dateNewest") {
+    }
+  },
+  computed: {
+    sortedResults: function() {
+      const copy = this.results;
+      copy.sort((a, b) => {
+        if (this.sortBy === "dateNewest") {
           return new Date(b.date_created) - new Date(a.date_created);
-        } else if (val === "dateOldest") {
+        } else if (this.sortBy === "dateOldest") {
           return new Date(a.date_created) - new Date(b.date_created);
         }
       });
-    }
-  },
-  watch: {
-    sortBy: function(val) {
-      this.sortResults(val);
+      return copy;
     }
   }
 };
